@@ -5,6 +5,7 @@ import Input from '../common/Input'
 import Button from '../common/Button'
 import api from '../core/api'
 import utils from '../core/utils'
+import useGlobal from '../core/global'
 
 
 const SignIn = ({ navigation }) => {
@@ -23,7 +24,8 @@ const SignIn = ({ navigation }) => {
   const [userNameError, setUserNameError] = useState('')
   const [passError, setPassError] = useState('')
 
-  function handleSignIn() {
+  const login = useGlobal((state) => state.login)
+ async function handleSignIn() {
     const failUsername = !userName
 
     if (failUsername) {
@@ -46,7 +48,16 @@ const SignIn = ({ navigation }) => {
         username: userName,
         password: password
       }
-    }).then(res => utils.log('signin ' , res.data)).catch(function (error) {
+    }).then(res => {
+      const creadentials = {
+        username: userName,
+        password: password,
+      }
+
+       login(creadentials, res.data.user)
+      utils.log('signin ', res.data)
+
+    }).catch(function (error) {
       if (error.response) {
         console.log(error.response.data);
         console.log(error.response.status);

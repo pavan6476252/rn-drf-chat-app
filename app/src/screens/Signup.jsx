@@ -5,6 +5,7 @@ import Input from '../common/Input'
 import Button from '../common/Button'
 import api from '../core/api'
 import utils from '../core/utils'
+import useGlobal from '../core/global'
 
 const Signup = ({ navigation }) => {
   const [username, setUsername] = useState('')
@@ -20,6 +21,8 @@ const Signup = ({ navigation }) => {
   const [lastNameError, setLastNameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [reTypePasswordError, setreTypePasswordError] = useState('')
+  const login = useGlobal((state) => state.login)
+
 
 
   function handleSubmit() {
@@ -63,11 +66,21 @@ const Signup = ({ navigation }) => {
       url: '/chat/signup/',
       data: {
         username: username,
-        first_name:firstName,
-        last_name:lastName,
+        first_name: firstName,
+        last_name: lastName,
         password: password
       }
-    }).then(res => utils.log('signUp ' , res.data)).catch(function (error) {
+    }).then(res => {
+
+      const creadentials = {
+        username: username,
+        password: password,
+      }
+
+      login(creadentials, res.data.user)
+      utils.log('signUp ', res.data)
+
+    }).catch(function (error) {
       if (error.response) {
         console.log(error.response.data);
         console.log(error.response.status);
@@ -128,7 +141,7 @@ const Signup = ({ navigation }) => {
           setError={setreTypePasswordError}
         />
 
-        <Button title={'Sign In'} onPress={handleSubmit}/>
+        <Button title={'Sign In'} onPress={handleSubmit} />
 
         <Text
           style={{ textAlign: 'center', marginTop: 40, color: 'gray' }}>

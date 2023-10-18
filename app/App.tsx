@@ -1,5 +1,5 @@
 import { View, Text, StatusBar } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { DefaultTheme, NavigationContainer, Theme } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Splash from './src/screens/Splash';
@@ -8,6 +8,7 @@ import Message from './src/screens/Message';
 import Search from './src/screens/Search';
 import SignIn from './src/screens/SignIn';
 import Signup from './src/screens/Signup';
+import useGlobal from './src/core/global';
 
 const stack = createNativeStackNavigator();
 
@@ -19,8 +20,14 @@ const lightTheme: Theme = {
 }
 
 const App = () => {
-  const [initialized] = useState(true)
-  const [authenticated] = useState(false)
+
+
+  const initialized = useGlobal((state) => state.initialized)
+  const authenticated = useGlobal((state) => state.authenticated)
+  const init = useGlobal(state => state.init)
+  useEffect(() => {
+    init()
+  }, [])
   return (
     <NavigationContainer theme={lightTheme}>
       <StatusBar barStyle='dark-content' />
